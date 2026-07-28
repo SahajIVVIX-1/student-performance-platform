@@ -1,0 +1,98 @@
+# Model Configuration
+# Student Performance Prediction Platform
+
+global:
+  random_seed: 42
+  n_jobs: -1
+  models_dir: "models"
+  metrics_output: "data/processed/metrics_summary.csv"
+
+logistic_regression:
+  penalty: "l2"
+  C: 1.0
+  class_weight: "balanced"
+  max_iter: 1000
+  solver: "lbfgs"
+  cv_folds: 5
+
+decision_tree:
+  max_depth_candidates: [3, 5, 7, 10, null]
+  min_samples_leaf: 5
+  class_weight: "balanced"
+  cv_folds: 5
+
+random_forest:
+  n_estimators: [100, 200]
+  max_depth: [5, 10, null]
+  min_samples_leaf: [1, 5]
+  class_weight: "balanced"
+  cv_folds: 3
+
+xgboost:
+  n_estimators: 1000
+  learning_rate: 0.05
+  max_depth: 6
+  subsample: 0.8
+  colsample_bytree: 0.8
+  early_stopping_rounds: 50
+  eval_metric: "logloss"
+  use_optuna: true
+  optuna_trials: 30
+  optuna_timeout: 120
+
+catboost:
+  iterations: 500
+  learning_rate: 0.05
+  depth: 6
+  early_stopping_rounds: 50
+  verbose: 0
+
+lightgbm:
+  n_estimators: 1000
+  learning_rate: 0.05
+  num_leaves: 31
+  early_stopping_rounds: 50
+  verbose: -1
+
+mlp_torch:
+  hidden_dims: [256, 128, 64]
+  dropout: 0.3
+  batch_norm: true
+  learning_rate: 0.001
+  batch_size: 32
+  max_epochs: 200
+  early_stopping_patience: 20
+  lr_scheduler_patience: 10
+  weight_decay: 1.0e-4
+
+lstm_torch:
+  hidden_dim: 128
+  num_layers: 2
+  dropout: 0.3
+  learning_rate: 0.001
+  batch_size: 32
+  max_epochs: 100
+  early_stopping_patience: 15
+  sequence_len: 10   # number of weekly quiz scores
+
+automl_flaml:
+  time_budget: 180   # seconds
+  metric: "f1"
+  task: "classification"
+  estimator_list: ["xgb_limitdepth", "rf", "lgbm", "lrl1", "lrl2"]
+
+evaluation:
+  bootstrap_n_iterations: 1000
+  bootstrap_ci: 0.95
+  primary_metric_classification: "f1"
+  primary_metric_regression: "rmse"
+
+shap:
+  background_sample_size: 100
+  max_display: 20
+  cache_dir: "data/processed/shap_cache"
+
+lime:
+  num_features: 10
+  num_samples: 500
+  output_dir: "data/processed/lime_outputs"

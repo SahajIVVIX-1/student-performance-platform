@@ -1,0 +1,80 @@
+# Data Configuration
+# Student Performance Prediction Platform
+
+dataset:
+  name: "UCI Student Performance"
+  source_url: "https://archive.ics.uci.edu/ml/machine-learning-databases/00320/student.zip"
+  raw_dir: "data/raw"
+  interim_dir: "data/interim"
+  processed_dir: "data/processed"
+  primary_file: "student-mat.csv"
+  secondary_file: "student-por.csv"
+  delimiter: ";"
+
+# Target variable options: regression | binary | multiclass
+task:
+  type: "binary"           # default: binary classification
+  target_column: "G3"
+  binary_threshold: 10     # G3 >= 10 => pass (1), else fail (0)
+  multiclass_bands:
+    Low: [0, 9]
+    Medium: [10, 14]
+    High: [15, 20]
+
+splits:
+  test_size: 0.15
+  val_size: 0.15
+  random_seed: 42
+  stratify: true
+
+# Column schema for validation
+schema:
+  numeric_columns:
+    age: {min: 15, max: 22}
+    Medu: {min: 0, max: 4}
+    Fedu: {min: 0, max: 4}
+    traveltime: {min: 1, max: 4}
+    studytime: {min: 1, max: 4}
+    failures: {min: 0, max: 4}
+    famrel: {min: 1, max: 5}
+    freetime: {min: 1, max: 5}
+    goout: {min: 1, max: 5}
+    Dalc: {min: 1, max: 5}
+    Walc: {min: 1, max: 5}
+    health: {min: 1, max: 5}
+    absences: {min: 0, max: 93}
+    G1: {min: 0, max: 20}
+    G2: {min: 0, max: 20}
+    G3: {min: 0, max: 20}
+
+  categorical_columns:
+    school: ["GP", "MS"]
+    sex: ["F", "M"]
+    address: ["U", "R"]
+    famsize: ["LE3", "GT3"]
+    Pstatus: ["T", "A"]
+    Mjob: ["teacher", "health", "services", "at_home", "other"]
+    Fjob: ["teacher", "health", "services", "at_home", "other"]
+    reason: ["home", "reputation", "course", "other"]
+    guardian: ["mother", "father", "other"]
+    schoolsup: ["yes", "no"]
+    famsup: ["yes", "no"]
+    paid: ["yes", "no"]
+    activities: ["yes", "no"]
+    nursery: ["yes", "no"]
+    higher: ["yes", "no"]
+    internet: ["yes", "no"]
+    romantic: ["yes", "no"]
+
+# Temporal extension (for LSTM)
+temporal:
+  generate_synthetic: true
+  n_weeks: 10
+  output_file: "data/raw/student_temporal.csv"
+
+# Engineered features
+feature_engineering:
+  grade_trend: true           # G2 - G1
+  avg_prior_grade: true       # mean(G1, G2)
+  study_efficiency: true      # studytime / (absences + 1)
+  support_index: true         # from famsup + schoolsup + paid
